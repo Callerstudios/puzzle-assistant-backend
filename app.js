@@ -1,32 +1,42 @@
-const express = require('express')
-const cors = require('cors')
-const bodyParser = require('body-parser')
-const app = express()
-const {readFileOut} = require('./fileCreator')
+const express = require("express");
+const cors = require("cors");
+const app = express();
+const { readFileOut, writeFileOut } = require("./fileCreator");
+const { verifyLogin } = require("./verify");
 
-app.use(cors())
-app.use(bodyParser.text())
+app.use(cors());
+app.use(express.json());
 
-app.get('/', (req, res)=>{
-    res.send("Home Page")
-})
-app.get('/about', (req, res)=>{
-    res.send("About Page")
-})
-app.get('/read', (req, res)=>{
-    const fileName = req.query.fileName
-    const result = readFileOut(fileName)
-    res.send(result)
-})
+app.get("/", (req, res) => {
+  res.send("Home Page");
+});
+app.get("/about", (req, res) => {
+  res.send("About Page");
+});
+app.get("/read/:id", (req, res) => {
+  const fileName = req.query.fileName;
+  const { userId } = req.params;
+  const result = readFileOut(fileName);
+  console.log(result);
+  res.send(result);
+});
 
-app.post('/', (req, res)=>{
-    const receivedData = req.body
-    console.log(`Received: ${receivedData}`);
-    res.status(200).send("Data received")
-})
+app.post("/write", (req, res) => {
+  console.log(req);
+  const { key, value } = req.body;
+  const fileName = req.query.fileName;
+  console.log(`Received: ${req.query.fileName}`);
+  const response = writeFileOut(fileName, key, value);
+  res.status(200).send(response);
+});
 
-app.all('*', (req, res)=>{
-    res.send("Page not found")
-})
+app.get("/verify", (req, res) => {
+    const {username, password} = req.query
+  res.send(verifyLogin(username, password));
+});
 
-app.listen(5000)
+app.all("*", (req, res) => {
+  res.send("Page not found");
+});
+
+app.listen(5000);
