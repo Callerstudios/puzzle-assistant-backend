@@ -7,6 +7,10 @@ const { verifyLogin } = require("./verify");
 app.use(cors());
 app.use(express.json());
 
+const delay = (req, res, next) => {
+  setTimeout(next, 3000);
+};
+
 app.get("/", (req, res) => {
   res.send("Home Page");
 });
@@ -30,8 +34,8 @@ app.post("/write", (req, res) => {
   res.status(200).send(response);
 });
 
-app.get("/verify", (req, res) => {
-    const {username, password} = req.query
+app.get("/verify", delay, (req, res) => {
+  const { username, password } = req.query;
   res.send(verifyLogin(username, password));
 });
 
