@@ -40,7 +40,7 @@ app.get("/verify", delay, (req, res) => {
 });
 
 app.all("*", (req, res) => {
-  res.send("Page not found");
+  res.send("Page/s not found");
 });
 
 app.listen(5000);
